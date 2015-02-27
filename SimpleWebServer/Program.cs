@@ -1,7 +1,7 @@
-﻿using System;
-
-using CommandLine;
+﻿using CommandLine;
 using CommandLine.Text;
+using SimpleWebServer.HTTP;
+using System;
 
 namespace SimpleWebServer
 {
@@ -35,6 +35,8 @@ namespace SimpleWebServer
 
     class Program
     {
+        private static HttpListener listener;
+
         static void Main(string[] args)
         {
             int port;
@@ -43,7 +45,11 @@ namespace SimpleWebServer
             if (CommandLine.Parser.Default.ParseArguments(args, options))
             {
                 port = options.port;
-                Console.WriteLine("The Port Used is {0}", port);
+                listener = new HttpListener(port);
+
+                Console.WriteLine("Server running on port {0}...", port);
+                Console.WriteLine("Press any key to exit server.\n");
+                Console.ReadKey();
             }
         }
     }
