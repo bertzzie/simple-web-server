@@ -14,6 +14,12 @@ namespace SimpleWebServer.HTTP
 
         public const int    BUFFER_SIZE = 4096;
 
+        // Root directory of your server
+        // If you change this, update the build macro
+        // because the build macro copy all the files in DefaultPage 
+        // to this directory
+        public const string ROOT_DIR = "www";
+
         #region HTTP Header Texts
         public const string HTTP_1_1_HEADER = @"HTTP/1.1 {0}
 Server: {1}
@@ -98,7 +104,7 @@ Keep-Alive: Close
                         file = "index.html";
                     }
 
-                    SendFile(file);
+                    SendFile(ROOT_DIR + Path.DirectorySeparatorChar + file);
 
                     return true;
                 }
