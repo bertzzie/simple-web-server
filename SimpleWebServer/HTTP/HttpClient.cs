@@ -19,6 +19,8 @@ namespace SimpleWebServer.HTTP
         // because the build macro copy all the files in DefaultPage 
         // to this directory
         public const string ROOT_DIR = "www";
+        public const string DEFAULT_404_PAGE = @"www\404.html";
+        public const string DEFAULT_500_PAGE = @"www\500.html";
 
         #region HTTP Header Texts
         public const string HTTP_1_1_HEADER = @"HTTP/1.1 {0}
@@ -29,28 +31,6 @@ Keep-Alive: Close
 
 ";
         #endregion HTTP Header Texts
-
-        #region Error Code Texts
-        public const string ERROR_404_HTML = @"
-<html>
-    <head><title>404 - File Not Found</title></head>
-    <body>
-        <h1>404 - File Not Found</h1>
-    </body>
-</html>
-        ";
-        public const string ERROR_500_HTML = @"
-<html>
-    <head><title>500 - Internal Server Error</title></head>
-    <body>
-        <h1>500 - Internal Server Error</h1>
-        <pre>
-            {0}
-        </pre>
-    </body>
-</html>
-        ";
-        #endregion Error Code Texts
 
         public HttpClient(Socket socket)
         {
@@ -94,19 +74,23 @@ Keep-Alive: Close
             {
                 _memoryStream.Seek(0, SeekOrigin.Begin);
                 var line = _streamReader.ReadLine();
+                var data = line.Split(' ');
 
-                if (line.ToUpperInvariant().StartsWith("GET"))
+                var method  = data[0];
+                var file    = data[1].TrimStart('/');
+                var version = data[2];
+
+                switch (method)
                 {
-                    var file = line.Split(' ')[1].TrimStart('/');
+                    case "GET":
+                        if (String.IsNullOrWhiteSpace(file))
+                        {
+                            file = "index.html";
+                        }
 
-                    if (String.IsNullOrWhiteSpace(file))
-                    {
-                        file = "index.html";
-                    }
+                        SendFile(ROOT_DIR + Path.DirectorySeparatorChar + file);
 
-                    SendFile(ROOT_DIR + Path.DirectorySeparatorChar + file);
-
-                    return true;
+                        return true;
                 }
 
                 return false;
@@ -126,20 +110,20 @@ Keep-Alive: Close
                     data = File.ReadAllBytes(file);
 
                     contentType  = GetContentType(Path.GetExtension(file).TrimStart('.'));
-                    responseCode = "200 OK";
+                    responseCode = HttpStatusDescription.Get(HttpStatusCode.OK);
                 }
                 else
                 {
-                    data = System.Text.ASCIIEncoding.ASCII.GetBytes(ERROR_404_HTML);
+                    data = File.ReadAllBytes(DEFAULT_404_PAGE);
 
                     contentType  = GetContentType("html");
-                    responseCode = "404 File Not Found";
+                    responseCode = HttpStatusDescription.Get(HttpStatusCode.NotFound);
                 }
             }
             catch(Exception e)
             {
-                data = System.Text.ASCIIEncoding.ASCII.GetBytes(String.Format(ERROR_500_HTML, e.ToString()));
-                responseCode = "500 Internal Server Error";
+                data = File.ReadAllBytes(DEFAULT_500_PAGE);
+                responseCode = HttpStatusDescription.Get(HttpStatusCode.InternalServerError);
             }
 
             string header   = String.Format(HTTP_1_1_HEADER, responseCode, _serverName, data.Length, contentType);
@@ -152,6 +136,7 @@ Keep-Alive: Close
             _networkStream.Dispose();
         }
 
+        // Not implemented yet
         private string GetContentType(string type)
         {
             return "text/html";
