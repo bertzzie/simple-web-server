@@ -47,6 +47,7 @@
     <Compile Include="HTTP\HttpClient.cs" />
     <Compile Include="HTTP\HttpListener.cs" />
     <Compile Include="HTTP\HttpStatusCode.cs" />
+    <Compile Include="MimeTypeMap\MimeTypeMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

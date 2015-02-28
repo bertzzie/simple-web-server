@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleWebServer.MimeTypeMap;
+using System;
 using System.IO;
 using System.Net.Sockets;
 
@@ -109,14 +110,14 @@ Keep-Alive: Close
                 {
                     data = File.ReadAllBytes(file);
 
-                    contentType  = GetContentType(Path.GetExtension(file).TrimStart('.'));
+                    contentType  = MimeTypeMap.MimeTypeMap.GetMimeType(Path.GetExtension(file).TrimStart('.'));
                     responseCode = HttpStatusDescription.Get(HttpStatusCode.OK);
                 }
                 else
                 {
                     data = File.ReadAllBytes(DEFAULT_404_PAGE);
 
-                    contentType  = GetContentType("html");
+                    contentType  = MimeTypeMap.MimeTypeMap.GetMimeType("html");
                     responseCode = HttpStatusDescription.Get(HttpStatusCode.NotFound);
                 }
             }
@@ -134,12 +135,6 @@ Keep-Alive: Close
             await _networkStream.FlushAsync();
 
             _networkStream.Dispose();
-        }
-
-        // Not implemented yet
-        private string GetContentType(string type)
-        {
-            return "text/html";
         }
     }
 }
