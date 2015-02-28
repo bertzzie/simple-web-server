@@ -124,6 +124,11 @@ Keep-Alive: Close
             catch(Exception e)
             {
                 data = File.ReadAllBytes(DEFAULT_500_PAGE);
+
+                Console.WriteLine("Exception Occurred!");
+                Console.WriteLine(e.ToString());
+                Console.WriteLine("\n");
+
                 responseCode = HttpStatusDescription.Get(HttpStatusCode.InternalServerError);
             }
 
