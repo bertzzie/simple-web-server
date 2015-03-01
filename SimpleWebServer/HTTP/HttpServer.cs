@@ -5,7 +5,7 @@ using System.Net.Sockets;
 
 namespace SimpleWebServer.HTTP
 {
-    class HttpClient
+    class HttpServer
     {
         private readonly Socket        _socket;
         private readonly NetworkStream _networkStream;
@@ -33,14 +33,14 @@ Keep-Alive: Close
 ";
         #endregion HTTP Header Texts
 
-        public HttpClient(Socket socket)
+        public HttpServer(Socket socket)
         {
             _socket = socket;
             _networkStream = new NetworkStream(socket, true);
             _streamReader = new StreamReader(_memoryStream);
         }
 
-        public HttpClient(Socket socket, string ServerName): this(socket)
+        public HttpServer(Socket socket, string ServerName): this(socket)
         {
             _serverName = ServerName;
         }

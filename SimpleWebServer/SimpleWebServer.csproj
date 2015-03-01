@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HTTP\HttpClient.cs" />
+    <Compile Include="HTTP\HttpServer.cs" />
     <Compile Include="HTTP\HttpListener.cs" />
     <Compile Include="HTTP\HttpStatusCode.cs" />
     <Compile Include="MimeTypeMap\MimeTypeMap.cs" />

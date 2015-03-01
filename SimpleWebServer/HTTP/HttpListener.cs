@@ -31,9 +31,9 @@ namespace SimpleWebServer.HTTP
                     break;
                 }
 
-                var client = new HttpClient(socket);
+                var server = new HttpServer(socket);
 
-                await Task.Factory.StartNew(client.Run);
+                await Task.Factory.StartNew(server.Run);
             }
         }
     }
