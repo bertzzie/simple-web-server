@@ -71,31 +71,29 @@ Keep-Alive: Close
 
         protected bool ProcessHeader()
         {
-            while (true)
+            _memoryStream.Seek(0, SeekOrigin.Begin);
+            var line = _streamReader.ReadLine();
+            var data = line.Split(' ');
+
+            var method  = data[0];
+            var file    = data[1].TrimStart('/');
+            var version = data[2];
+
+            switch (method)
             {
-                _memoryStream.Seek(0, SeekOrigin.Begin);
-                var line = _streamReader.ReadLine();
-                var data = line.Split(' ');
+                case "GET":
+                    if (String.IsNullOrWhiteSpace(file))
+                    {
+                        file = "index.html";
+                    }
 
-                var method  = data[0];
-                var file    = data[1].TrimStart('/');
-                var version = data[2];
+                    SendFile(ROOT_DIR + Path.DirectorySeparatorChar + file);
 
-                switch (method)
-                {
-                    case "GET":
-                        if (String.IsNullOrWhiteSpace(file))
-                        {
-                            file = "index.html";
-                        }
-
-                        SendFile(ROOT_DIR + Path.DirectorySeparatorChar + file);
-
-                        return true;
-                }
-
-                return false;
+                    return true;
+                // case "POST": and so on...
             }
+
+            return false;
         }
 
         private async void SendFile(string file)
